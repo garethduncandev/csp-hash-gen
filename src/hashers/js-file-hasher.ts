@@ -24,6 +24,15 @@ export class JsFileHasher {
     });
 
     for (const jsFile of jsFiles) {
+
+      // load js file content
+      const jsFilePath = `${absoluteDirectory}/${jsFile}`;
+      const jsContent = fs.readFileSync(jsFilePath, 'utf-8');
+      // remove last line break
+      const jsTrimmed = jsContent.trim();
+      // save file
+      fs.writeFileSync(jsFilePath, jsTrimmed, 'utf-8');
+
       const hashResult = await this.fileHasher.hashFile(
         //htmlFilePath,
         absoluteDirectory,

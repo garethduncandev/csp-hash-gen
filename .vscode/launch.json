@@ -10,7 +10,7 @@
       "sourceMaps": true,
       "smartStep": true,
       "args": [
-        "C:\\Users\\gareth\\source\\repos\\little-nunnas-pizza\\src\\app\\dist\\little-nunnas-pizza\\browser",
+        "./test",
         "-i",
         "-m"
       ],

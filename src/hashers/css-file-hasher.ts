@@ -25,6 +25,14 @@ export class CssFileHasher {
     });
 
     for (const cssFile of cssFiles) {
+      // load css file content
+      const cssFilePath = `${absoluteDirectory}/${cssFile}`;
+      const cssContent = fs.readFileSync(cssFilePath, 'utf-8');
+      // remove last line break
+      const cssTrimmed = cssContent.trim();
+      // save file
+      fs.writeFileSync(cssFilePath, cssTrimmed, 'utf-8');
+
       const hashResult = await this.fileHasher.hashFile(
         //htmlFilePath,
         absoluteDirectory,
