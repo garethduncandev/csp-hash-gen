@@ -4,10 +4,10 @@
   "type": "module",
   "repository": {
     "type": "git",
-    "url": "https://github.com/garethduncandev/csp-hash-gen.git"
+    "url": "git+https://github.com/garethduncandev/csp-hash-gen.git"
   },
   "bin": {
-    "csp-hash-gen": "./dist/index.js"
+    "csp-hash-gen": "dist/index.js"
   },
   "scripts": {
     "start": "node dist/index.js ./test",
