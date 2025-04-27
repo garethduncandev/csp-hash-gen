@@ -18,11 +18,11 @@ jobs:
       - run: npm ci
       - run: npm run build
 
-      - name: Build Changelog
-        id: github_release
-        uses: mikepenz/release-changelog-builder-action@v3
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      # - name: Build Changelog
+      #   id: github_release
+      #   uses: mikepenz/release-changelog-builder-action@v3
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Extract version from package.json
         id: extract_version
