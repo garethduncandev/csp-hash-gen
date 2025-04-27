@@ -1,0 +1,30 @@
+{
+  "name": "csp-hash-gen",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "start": "node dist/index.js ./test",
+    "prestart": "npm run build",
+    "build": "tsc"
+  },
+  "keywords": [
+    "csp",
+    "hash",
+    "generator",
+    "javascript"
+  ],
+  "bin": {
+    "csp-hash-gen": "./dist/index.js"
+  },
+  "author": "",
+  "license": "MIT",
+  "description": "Generate a csp using hashes for a js application",
+  "dependencies": {
+    "cheerio": "^1.0.0",
+    "commander": "^13.1.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.14.1",
+    "typescript": "^5.8.3"
+  }
+}

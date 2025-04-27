@@ -1,0 +1,51 @@
+import { FileHasher } from './file-hasher';
+import { HashResult } from './hash-result';
+import * as cheerio from 'cheerio';
+import { SHAType } from '../sha-type.enum';
+import * as fs from 'fs';
+
+export class JsFileHasher {
+  public constructor(public readonly fileHasher: FileHasher) {}
+  public async hashFile(
+    htmlFilePath: string,
+    absoluteDirectory: string,
+    sha: SHAType,
+    addIntegrity: boolean,
+    parsedHtmlContent: cheerio.CheerioAPI
+  ): Promise<HashResult[]> {
+    // Find all <script> tags with a src attribute
+    const jsFiles: string[] = [];
+    const hashes: HashResult[] = [];
+    parsedHtmlContent('script[src]').each((_, element) => {
+      const src = parsedHtmlContent(element).attr('src');
+      if (src) {
+        jsFiles.push(src);
+      }
+    });
+
+    for (const jsFile of jsFiles) {
+      const hashResult = await this.fileHasher.hashFile(
+        //htmlFilePath,
+        absoluteDirectory,
+        jsFile,
+        sha
+      );
+      if (hashResult) {
+        hashes.push(hashResult);
+        if (!addIntegrity) {
+          continue;
+        }
+
+        // add integrity attribute to the script tag
+        const scriptTag = parsedHtmlContent(`script[src="${jsFile}"]`);
+
+        // check if script tag already has integrity attribute
+        scriptTag.attr('integrity', hashResult.hash);
+
+        // save the updated HTML content back to the file
+        fs.writeFileSync(htmlFilePath, parsedHtmlContent.html(), 'utf-8');
+      }
+    }
+    return hashes;
+  }
+}
