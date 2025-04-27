@@ -1,6 +1,6 @@
-import { FileHasher } from './file-hasher';
-import { HashResult } from './hash-result';
-import { SHAType } from '../sha-type.enum';
+import { FileHasher } from './file-hasher.js';
+import { HashResult } from './hash-result.js';
+import { SHAType } from '../sha-type.enum.js';
 import * as cheerio from 'cheerio';
 
 export class JsInlineHasher {

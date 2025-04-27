@@ -1,5 +1,5 @@
-import { HashResult } from './hash-result';
-import { SHAType } from '../sha-type.enum';
+import { HashResult } from './hash-result.js';
+import { SHAType } from '../sha-type.enum.js';
 import * as crypto from 'crypto';
 import * as fs from 'fs';
 import * as path from 'path';

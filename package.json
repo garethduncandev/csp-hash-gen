@@ -1,11 +1,21 @@
 {
   "name": "csp-hash-gen",
-  "version": "1.0.0",
-  "main": "index.js",
+  "version": "0.0.1",
+  "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/garethduncandev/csp-hash-gen.git"
+  },
+  "bin": {
+    "csp-hash-gen": "./dist/index.js"
+  },
   "scripts": {
     "start": "node dist/index.js ./test",
     "prestart": "npm run build",
-    "build": "tsc"
+    "build": "tsc",
+    "deploy": "npm publish --access public",
+    "prepack": "clean-package",
+    "postpack": "clean-package restore"
   },
   "keywords": [
     "csp",
@@ -13,18 +23,26 @@
     "generator",
     "javascript"
   ],
-  "bin": {
-    "csp-hash-gen": "./dist/index.js"
-  },
-  "author": "",
   "license": "MIT",
-  "description": "Generate a csp using hashes for a js application",
+  "description": "Generate Content Security Policies using hashes for a js application",
   "dependencies": {
     "cheerio": "^1.0.0",
     "commander": "^13.1.0"
   },
   "devDependencies": {
     "@types/node": "^22.14.1",
+    "clean-package": "^2.2.0",
     "typescript": "^5.8.3"
-  }
+  },
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ]
 }

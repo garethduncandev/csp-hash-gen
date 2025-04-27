@@ -1,4 +1,4 @@
-import { HashResult, HtmlHashes } from '../hashers/hash-result';
+import { HashResult, HtmlHashes } from '../hashers/hash-result.js';
 
 export class CspGenerator {
   public createCombinedCsp(

@@ -1,16 +1,18 @@
+#!/usr/bin/env node
+
 import * as commander from 'commander';
 import * as fs from 'fs';
 import * as path from 'path';
 import * as cheerio from 'cheerio';
-import { HashResult, HtmlHashes } from './hashers/hash-result';
-import { SHAType } from './sha-type.enum';
-import { FileHasher } from './hashers/file-hasher';
-import { CspGenerator } from './csp/csp-generator';
-import { JsFileHasher } from './hashers/js-file-hasher';
-import { JsInlineHasher } from './hashers/js-inline-hasher';
-import { CssFileHasher } from './hashers/css-file-hasher';
-import { CssInlineHasher } from './hashers/css-inline-hasher';
-import { MetaTagHelper } from './csp/meta-tag-helper';
+import { HashResult, HtmlHashes } from './hashers/hash-result.js';
+import { SHAType } from './sha-type.enum.js';
+import { FileHasher } from './hashers/file-hasher.js';
+import { CspGenerator } from './csp/csp-generator.js';
+import { JsFileHasher } from './hashers/js-file-hasher.js';
+import { JsInlineHasher } from './hashers/js-inline-hasher.js';
+import { CssFileHasher } from './hashers/css-file-hasher.js';
+import { CssInlineHasher } from './hashers/css-inline-hasher.js';
+import { MetaTagHelper } from './csp/meta-tag-helper.js';
 
 const program = new commander.Command();
 
