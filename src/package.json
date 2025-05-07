@@ -1,6 +1,6 @@
 {
   "name": "csp-hash-gen",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "type": "module",
   "repository": {
     "type": "git",
@@ -10,7 +10,7 @@
     "csp-hash-gen": "dist/index.js"
   },
   "scripts": {
-    "start": "node dist/index.js ./test",
+    "start": "node dist/index.js -d ./test",
     "prestart": "npm run build",
     "build": "tsc",
     "deploy": "npm publish --access public",

@@ -16,7 +16,7 @@ export class CspGenerator {
     // remove duplicates
     const uniqueHashes = new Map<string, HashResult>();
     combinedHashes.forEach((hash) => {
-      const key = `${hash.type}-${hash.hash}`;
+      const key = `${hash.resourceType}-${hash.hash}`;
       if (!uniqueHashes.has(key)) {
         uniqueHashes.set(key, hash);
       }
@@ -29,7 +29,7 @@ export class CspGenerator {
 
   public createHtmlCsp(hashes: HashResult[], strictDynamic: boolean): string {
     const scriptSrcSegments = hashes
-      .filter((x) => x.type === 'js')
+      .filter((x) => x.resourceType === 'script')
       .map((x) => `'${x.hash}'`);
     let scriptSrc = `script-src ${scriptSrcSegments.join(' ')}`;
 
@@ -40,25 +40,28 @@ export class CspGenerator {
 
     scriptSrc = `${scriptSrc};`;
 
-    const styleSrcSegments = hashes
-      .filter((x) => x.type === 'css')
+    const styleHashes = hashes
+      .filter((x) => x.resourceType === 'style')
       .map((x) => `'${x.hash}'`);
-    const distinctSrcSegments = [...new Set(styleSrcSegments)];
+    const distinctStyleHashes = [...new Set(styleHashes)];
 
     const styleDomains = hashes
       .filter(
-        (x) => x.type === 'css' && x.domain !== null && x.domain !== 'self'
+        (x) =>
+          x.resourceType === 'style' && x.domain !== null && x.domain !== 'self'
       )
       .map((x) => `${x.domain}`);
     const distinctStyleDomains = [...new Set(styleDomains)];
 
     // self needs single quotes, domains don't
-    const hasSelf = hashes.some((x) => x.type === 'css' && x.domain === 'self');
+    const hasSelf = hashes.some(
+      (x) => x.resourceType === 'style' && x.domain === 'self'
+    );
     if (hasSelf) {
       distinctStyleDomains.push("'self'");
     }
 
-    const styleSrc = `style-src ${distinctSrcSegments.join(
+    const styleSrc = `style-src ${distinctStyleHashes.join(
       ' '
     )} ${distinctStyleDomains.join(' ')};`;
 

@@ -1,11 +1,10 @@
-export type HashResult = {
+export interface HashResult {
   resourcePath: string | null;
   hash: string;
-  external: boolean;
-  inline: boolean;
-  type: string;
+  resourceLocation: 'local' | 'remote' | 'inline' | 'embedded';
+  resourceType: 'script' | 'style';
   domain: string | null;
-};
+}
 
 export interface HtmlHashes {
   htmlFilePath: string;

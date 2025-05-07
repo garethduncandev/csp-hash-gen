@@ -10,9 +10,10 @@
       "sourceMaps": true,
       "smartStep": true,
       "args": [
+        "-d",
         "./test",
-        "-i",
-        "-m"
+        "--insert-meta-tag",
+        "--insert-integrity-attributes"
       ],
       "internalConsoleOptions": "openOnSessionStart",
       "outFiles": ["${workspaceFolder}/dist/**/*.js"]
