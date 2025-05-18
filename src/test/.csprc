@@ -1,0 +1,95 @@
+{
+  "calculateHashes": true,
+  "directives": [
+    {
+      "directive": "script-src",
+      "values": [
+        "https://example.com/"
+      ]
+    },
+    {
+      "directive": "style-src",
+      "values": [
+        "https://example.com/"
+      ]
+    },
+    {
+      "directive": "img-src",
+      "values": [
+        "https://example.com/"
+      ]
+    },
+    {
+      "directive": "connect-src",
+      "values": [
+        "https://example.com/"
+      ]
+    },
+    {
+      "directive": "font-src",
+      "values": [
+        "https://example.com/"
+      ]
+    },
+    {
+      "directive": "media-src",
+      "values": [
+        "https://example.com/"
+      ]
+    },
+    {
+      "directive": "frame-src",
+      "values": [
+        "https://example.com/"
+      ]
+    },
+    {
+      "directive": "worker-src",
+      "values": [
+        "https://example.com/"
+      ]
+    },
+    {
+      "directive": "child-src",
+      "values": [
+        "https://example.com/"
+      ]
+    },
+    {
+      "directive": "sandbox",
+      "values": []
+    },
+    {
+      "directive": "upgrade-insecure-requests"
+    },
+    {
+      "directive": "block-all-mixed-content"
+    },
+    {
+      "directive": "require-trusted-types-for",
+      "values": "script"
+    },
+    {
+      "directive": "trusted-types",
+      "values": [
+        "allow-duplicates",
+        {
+          "policies": [
+            "policy-1",
+            "policy-2"
+          ]
+        }
+      ]
+    },
+    {
+      "directive": "report-uri",
+      "values": "https://example.com/csp-report"
+    },
+    {
+      "directive": "report-to",
+      "values": [
+        "csp-endpoint"
+      ]
+    }
+  ]
+}

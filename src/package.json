@@ -11,6 +11,8 @@
   },
   "scripts": {
     "start": "node dist/index.js -d ./test",
+    "createEmptyConfig": "node dist/index.js --create-empty-config -d ./test",
+    "precreateEmptyConfig": "npm run build",
     "prestart": "npm run build",
     "build": "tsc",
     "deploy": "npm publish --access public",
