@@ -1,95 +1,106 @@
 {
-  "calculateHashes": true,
-  "directives": [
-    {
-      "directive": "script-src",
-      "values": [
-        "https://example.com/"
-      ]
+  "directives": {
+    "default-src": {
+      "self": false,
+      "none": false
     },
-    {
-      "directive": "style-src",
-      "values": [
-        "https://example.com/"
-      ]
+    "script-src": {
+      "strict_dynamic": false,
+      "unsafe-inline": false,
+      "unsafe-eval": false,
+      "self": "auto",
+      "autoHash": true,
+      "additionalValues": []
     },
-    {
-      "directive": "img-src",
-      "values": [
-        "https://example.com/"
-      ]
+    "style-src": {
+      "unsafe-inline": false,
+      "unsafe-eval": false,
+      "self": "auto",
+      "data": false,
+      "blob": false,
+      "autoHash": true,
+      "additionalValues": []
     },
-    {
-      "directive": "connect-src",
-      "values": [
-        "https://example.com/"
-      ]
+    "img-src": {
+      "self": false,
+      "data": false,
+      "blob": false,
+      "none": false,
+      "additionalValues": []
     },
-    {
-      "directive": "font-src",
-      "values": [
-        "https://example.com/"
-      ]
+    "connect-src": {
+      "self": false,
+      "ws": false,
+      "wss": false,
+      "none": false,
+      "additionalValues": []
     },
-    {
-      "directive": "media-src",
-      "values": [
-        "https://example.com/"
-      ]
+    "font-src": {
+      "self": false,
+      "data": false,
+      "blob": false,
+      "none": false,
+      "additionalValues": []
     },
-    {
-      "directive": "frame-src",
-      "values": [
-        "https://example.com/"
-      ]
+    "media-src": {
+      "self": false,
+      "data": false,
+      "blob": false,
+      "none": false,
+      "additionalValues": []
     },
-    {
-      "directive": "worker-src",
-      "values": [
-        "https://example.com/"
-      ]
+    "frame-src": {
+      "self": false,
+      "data": false,
+      "blob": false,
+      "none": false,
+      "additionalValues": []
     },
-    {
-      "directive": "child-src",
-      "values": [
-        "https://example.com/"
-      ]
+    "worker-src": {
+      "self": false,
+      "data": false,
+      "blob": false,
+      "none": false,
+      "additionalValues": []
     },
-    {
-      "directive": "sandbox",
-      "values": []
+    "child-src": {
+      "self": false,
+      "unsafe-inline": false,
+      "unsafe-eval": false,
+      "data": false,
+      "blob": false,
+      "none": false,
+      "additionalValues": []
     },
-    {
-      "directive": "upgrade-insecure-requests"
+    "sandbox": {
+      "allow-forms": false,
+      "allow-modals": false,
+      "allow-popups": false,
+      "allow-same-origin": false,
+      "allow-scripts": false,
+      "allow-downloads": false,
+      "allow-top-navigation": false,
+      "allow-top-navigation-by-user-activation": false,
+      "allow-presentation": false,
+      "additionalValues": []
     },
-    {
-      "directive": "block-all-mixed-content"
-    },
-    {
-      "directive": "require-trusted-types-for",
+    "upgrade-insecure-requests": false,
+    "block-all-mixed-content": false,
+    "require-trusted-types-for": {
       "values": "script"
     },
-    {
-      "directive": "trusted-types",
-      "values": [
-        "allow-duplicates",
-        {
-          "policies": [
-            "policy-1",
-            "policy-2"
-          ]
-        }
-      ]
+    "trusted-types": {
+      "none": false,
+      "allow_duplicates": false,
+      "policies": [],
+      "additionalValues": []
     },
-    {
-      "directive": "report-uri",
-      "values": "https://example.com/csp-report"
+    "report-uri": {
+      "value": ""
     },
-    {
-      "directive": "report-to",
-      "values": [
-        "csp-endpoint"
-      ]
-    }
-  ]
+    "report-to": {
+      "values": []
+    },
+    "additionalDirectives": {}
+  }
 }

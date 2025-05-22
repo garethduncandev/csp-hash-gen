@@ -7,9 +7,9 @@ const program = new commander.Command();
 
 program
   .option('--create-empty-config', 'Create empty config file', false)
-  .option('-d, --directory <string> ', 'Directory', './')
-  .option('--sha', 'SHA type - sha256, sha384 or sha512', 'sha256')
-  .option('-c, --config', 'CLI config')
+  .option('--sha <string>', 'SHA type - sha256, sha384 or sha512', 'sha256')
+  .option('--directory <string>', 'Directory', './')
+  .option('--config <string>', 'CLI config', './.csprc')
   .option(
     '--insert-meta-tag',
     'Insert csp meta tag into head of html file',
@@ -21,10 +21,14 @@ program
     false
   )
   .action(async (options) => {
-    await main({
-      ...options,
-      configPath: options.config,
-    });
+    await main(
+      options.createEmptyConfig,
+      options.directory,
+      options.sha,
+      options.insertMetaTag,
+      options.insertIntegrityAttributes,
+      options.config
+    );
   });
 
 program.parse(process.argv);

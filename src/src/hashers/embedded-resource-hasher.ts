@@ -29,7 +29,7 @@ export class EmbeddedResourceHasher extends ContentHasher {
     for (const resource of embeddedResources) {
       const hash = this.hashContent(resource.content, sha);
       hashes.push({
-        resourcePath: null,
+        src: null,
         hash,
         resourceLocation: 'embedded',
         resourceType: resource.type,

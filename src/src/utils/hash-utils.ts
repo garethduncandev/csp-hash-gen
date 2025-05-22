@@ -9,7 +9,7 @@ export async function getHtmlFileHashes(
   absoluteDir: string,
   htmlFilePath: string,
   sha: SHAType,
-  addIntegrityAttributes: boolean
+  resourceType: 'script' | 'style'
 ): Promise<HashResult[]> {
   const htmlContent = fs.readFileSync(htmlFilePath, 'utf-8');
   const parsedHtmlContent = cheerio.load(htmlContent);
@@ -20,8 +20,7 @@ export async function getHtmlFileHashes(
       htmlFilePath,
       absoluteDir,
       sha,
-      addIntegrityAttributes,
-      parsedHtmlContent
+      resourceType
     );
 
   const embeddedResourceHasher = new EmbeddedResourceHasher();

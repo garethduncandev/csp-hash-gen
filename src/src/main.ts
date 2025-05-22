@@ -1,43 +1,31 @@
+import * as cheerio from 'cheerio';
 import * as fs from 'fs';
 import * as path from 'path';
-import * as cheerio from 'cheerio';
-import { SHAType } from './sha-type.enum.js';
-import { CspGenerator } from './csp-generator.js';
-import { MetaTagHelper } from './utils/meta-tag-utils.js';
-import { getFilePaths } from './utils/file-utils.js';
-import { getHtmlFileHashes } from './utils/hash-utils.js';
-import { HtmlHashes } from './hashers/hash-result.js';
 import { Config } from './config.js';
+import { CspGenerator } from './csp-generator.js';
+import { CspParser } from './csp-parser.js';
+import { Csp } from './csp.js';
+import { SHAType } from './sha-type.enum.js';
 import { ConfigUtils } from './utils/config-utils.js';
+import { getFilePaths } from './utils/file-utils.js';
+import { addMetaTag } from './utils/meta-tag-utils.js';
 
-export async function main(options: {
-  createEmptyConfig: false | 'empty' | 'full';
-  directory: string;
-  sha: SHAType;
-  insertMetaTag: boolean;
-  insertIntegrityAttributes: boolean;
-  configPath: string;
-}): Promise<void> {
-  if (options.createEmptyConfig) {
-    const configUtils = new ConfigUtils();
-
-    // Create an empty config file
-    const emptyConfig = configUtils.createEmptyConfig(
-      options.directory,
-      options.createEmptyConfig
-    );
-    console.log(emptyConfig);
-    console.log('Created empty config file at csp-config.json');
-    return;
-  }
+export async function main(
+  createEmptyConfig: false | 'empty' | 'full',
+  directory: string,
+  sha: SHAType,
+  insertMetaTag: boolean,
+  insertIntegrityAttributes: boolean,
+  configPath: string
+): Promise<void> {
+  const configUtils = new ConfigUtils();
 
   // Check if the config file exists
-  let config: Config | undefined = undefined;
-  // update ./.csrpc based on directory
-  const configurationPath = path.resolve(options.directory, '.csprc');
-
-  if (fs.existsSync(configurationPath)) {
-    const configFile = fs.readFileSync(configurationPath, 'utf-8');
+  let config: Config = configUtils.getDefaultConfig();
+  console.log('config path', configPath);
+  if (fs.existsSync(configPath)) {
+    console.log('.csprc file found');
+    const configFile = fs.readFileSync(configPath, 'utf-8');
     try {
       config = JSON.parse(configFile) as Config;
     } catch (error) {
@@ -46,56 +34,81 @@ export async function main(options: {
     }
   }
 
-  const cspGenerator = new CspGenerator(config);
-  const metaTagHelper = new MetaTagHelper();
-
-  const allFilePaths = getFilePaths(path.resolve(options.directory));
+  const allFilePaths = getFilePaths(path.resolve(directory));
   const htmlFilePaths = allFilePaths.filter((filePath) =>
     ['.html', '.htm'].includes(path.extname(filePath))
   );
 
-  const hashes: HtmlHashes[] = [];
+  var cspGenerator = new CspGenerator();
+  const cspParser = new CspParser(config);
 
-  const createHashes = config?.calculateHashes ?? false;
-  if (createHashes) {
-    for (let htmlFilePath of htmlFilePaths) {
-      const absoluteDir = path.resolve(path.dirname(htmlFilePath));
+  const policies: Csp[] = [];
+  for (const htmlFilePath of htmlFilePaths) {
+    const htmlContent = fs.readFileSync(htmlFilePath, 'utf-8');
+    const parsedHtmlContent = cheerio.load(htmlContent);
 
-      const htmlHashes = await getHtmlFileHashes(
-        absoluteDir,
-        htmlFilePath,
-        options.sha,
-        options.insertIntegrityAttributes
-      );
+    const result = await cspGenerator.generateCsp(htmlFilePath, sha);
+    policies.push(result);
+    console.log(JSON.stringify(result, null, 2));
 
-      const htmlCsp = cspGenerator.createHtmlCsp(htmlHashes);
+    // add csp meta tag (and report-to meta tag if needed)
 
-      console.log(`CSP for ${htmlFilePath}`);
-      console.log(htmlCsp);
-      console.log('');
-      console.log(
-        '------------------------------------------------------------'
-      );
+    if (insertMetaTag) {
+      const parsedCsp = cspParser.parseCsp(result);
+      console.log('Parsed CSP:', parsedCsp);
+      addMetaTag(parsedCsp, htmlFilePath, parsedHtmlContent);
+    }
 
-      if (options.insertMetaTag) {
-        const htmlContent = fs.readFileSync(htmlFilePath, 'utf-8');
-        const parsedHtmlContent = cheerio.load(htmlContent);
-        metaTagHelper.addMetaTag(htmlCsp, htmlFilePath, parsedHtmlContent);
+    if (insertIntegrityAttributes) {
+      for (const scriptHash of result.directives['script-src'].hashes) {
+        if (
+          scriptHash.hash ===
+          'sha256-vNsfNsiZfYJ11SIlouPfGfGwhSLvGbsxKUEE8c3ZzUw='
+        ) {
+          console.log('gareth', scriptHash);
+        }
+        if (scriptHash.src) {
+          addIntegrityAttribute(
+            htmlFilePath,
+            parsedHtmlContent,
+            scriptHash.src,
+            'script',
+            scriptHash.hash
+          );
+        }
       }
 
-      const result: HtmlHashes = {
-        hashes: htmlHashes,
-        htmlFilePath: htmlFilePath,
-      };
-      hashes.push(result);
+      for (const styleHash of result.directives['style-src'].hashes) {
+        if (styleHash.src) {
+          addIntegrityAttribute(
+            htmlFilePath,
+            parsedHtmlContent,
+            styleHash.src,
+            'style',
+            styleHash.hash
+          );
+        }
+      }
     }
-  }
 
-  console.log(JSON.stringify(hashes, null, 2));
-  console.log('');
-  console.log('------------------------------------------------------------');
-  const csp = cspGenerator.createCombinedCsp(hashes);
-  console.log('');
-  console.log(`CSP combined:`);
-  console.log(csp);
+    // merge stuff here
+    const mergedCsp = cspGenerator.mergePolicies(policies);
+
+    console.log('Merged CSP:', JSON.stringify(mergedCsp, null, 2));
+  }
+}
+
+function addIntegrityAttribute(
+  htmlFilePath: string,
+  parsedHtmlContent: cheerio.CheerioAPI,
+  resourceUrl: string,
+  resourceType: 'script' | 'style',
+  hash: string
+) {
+  const element =
+    resourceType === 'script'
+      ? parsedHtmlContent(`script[src="${resourceUrl}"]`)
+      : parsedHtmlContent(`link[href="${resourceUrl}"]`);
+  element.attr('integrity', hash);
+  fs.writeFileSync(htmlFilePath, parsedHtmlContent.html(), 'utf-8');
 }

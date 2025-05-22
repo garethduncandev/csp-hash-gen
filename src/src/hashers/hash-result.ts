@@ -1,7 +1,7 @@
 export interface HashResult {
-  resourcePath: string | null;
+  src?: string | null;
   hash: string;
-  resourceLocation: 'local' | 'remote' | 'inline' | 'embedded';
+  resourceLocation: 'local' | 'remote' | 'embedded';
   resourceType: 'script' | 'style';
   domain: string | null;
 }

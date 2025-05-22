@@ -10,25 +10,14 @@ export class ExternalResourceHasher extends ContentHasher {
     htmlFilePath: string,
     absoluteDirectory: string,
     sha: SHAType,
-    addIntegrity: boolean,
-    parsedHtmlContent: cheerio.CheerioAPI
+    resourceType: 'script' | 'style'
   ): Promise<HashResult[]> {
-    const externalResources: { url: string; type: 'style' | 'script' }[] = [];
+    const parsedHtmlContent = this.getParsedHtmlContent(htmlFilePath);
+    const externalResources = this.getExternalResources(
+      parsedHtmlContent,
+      resourceType
+    );
     const hashes: HashResult[] = [];
-
-    parsedHtmlContent('link[rel="stylesheet"]').each((_, element) => {
-      const href = parsedHtmlContent(element).attr('href');
-      if (href) {
-        externalResources.push({ url: href, type: 'style' });
-      }
-    });
-
-    parsedHtmlContent('script[src]').each((_, element) => {
-      const src = parsedHtmlContent(element).attr('src');
-      if (src) {
-        externalResources.push({ url: src, type: 'script' });
-      }
-    });
 
     for (const externalResource of externalResources) {
       const hashResult = await this.hashResource(
@@ -42,23 +31,36 @@ export class ExternalResourceHasher extends ContentHasher {
       }
 
       hashes.push(hashResult);
-      if (!addIntegrity) {
-        continue;
-      }
-
-      // add integrity attribute to the resource element
-      const element =
-        externalResource.type === 'script'
-          ? parsedHtmlContent(`script[src="${externalResource.url}"]`)
-          : parsedHtmlContent(`link[href="${externalResource.url}"]`);
-
-      // check if script tag already has integrity attribute
-      element.attr('integrity', hashResult.hash);
-
-      // save the updated HTML content back to the file
-      fs.writeFileSync(htmlFilePath, parsedHtmlContent.html(), 'utf-8');
     }
     return hashes;
+  }
+
+  private getExternalResources(
+    parsedHtmlContent: cheerio.CheerioAPI,
+    resourceType: 'script' | 'style'
+  ): { url: string; type: 'script' | 'style' }[] {
+    const externalResources: { url: string; type: 'script' | 'style' }[] = [];
+    if (resourceType === 'style') {
+      parsedHtmlContent('link[rel="stylesheet"]').each((_, element) => {
+        const href = parsedHtmlContent(element).attr('href');
+        if (href) {
+          externalResources.push({ url: href, type: 'style' });
+        }
+      });
+    } else if (resourceType === 'script') {
+      parsedHtmlContent('script[src]').each((_, element) => {
+        const src = parsedHtmlContent(element).attr('src');
+        if (src) {
+          externalResources.push({ url: src, type: 'script' });
+        }
+      });
+    }
+    return externalResources;
+  }
+
+  private getParsedHtmlContent(htmlFilePath: string): cheerio.CheerioAPI {
+    const htmlContent = fs.readFileSync(htmlFilePath, 'utf-8');
+    return cheerio.load(htmlContent);
   }
 
   private async hashResource(
@@ -89,7 +91,7 @@ export class ExternalResourceHasher extends ContentHasher {
     const resourceHash = this.hashContent(fileContent, sha);
 
     return {
-      resourcePath: absoluteFilePath,
+      src: absoluteFilePath,
       hash: resourceHash,
       resourceLocation: 'local',
       resourceType: resourceType,
@@ -119,7 +121,7 @@ export class ExternalResourceHasher extends ContentHasher {
     const domain = `${parsedUrl.protocol}//${parsedUrl.hostname}` || null; // Fixed variable reference
 
     return {
-      resourcePath: url,
+      src: url,
       hash: resourceHash,
       resourceLocation: 'remote',
       resourceType: resourceType,

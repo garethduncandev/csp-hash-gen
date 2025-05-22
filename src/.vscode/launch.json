@@ -13,7 +13,9 @@
         "-d",
         "./test",
         "--insert-meta-tag",
-        "--insert-integrity-attributes"
+        "--insert-integrity-attributes",
+        "--config",
+        "./test/.csprc"
       ],
       "internalConsoleOptions": "openOnSessionStart",
       "outFiles": ["${workspaceFolder}/dist/**/*.js"]

@@ -1,129 +1,184 @@
-import { Config, DirectiveConfig } from './config.js';
-import { HashResult, HtmlHashes } from './hashers/hash-result.js';
+import path from 'path';
+import { Csp } from './csp.js';
+import { getFilePaths } from './utils/file-utils.js';
+import { getHtmlFileHashes } from './utils/hash-utils.js';
+import { SHAType } from './sha-type.enum.js';
+
+export type CspResponse = {
+  combinedCsp: Csp;
+  individualCsps: { htmlPath: string; csp: Csp }[];
+};
 
 export class CspGenerator {
-  public constructor(public readonly config: Config | undefined) {}
-  public createCombinedCsp(hashes: HtmlHashes[]): string {
-    // create combined csp
-    const combinedHashes: HashResult[] = hashes.reduce(
-      (acc: HashResult[], htmlHashes: HtmlHashes) => {
-        return acc.concat(htmlHashes.hashes);
-      },
-      []
+  public constructor() {}
+
+  public async generateCsp(htmlFilePath: string, sha: SHAType): Promise<Csp> {
+    // const hashes: HtmlHashes[] = [];
+
+    const absoluteDir = path.resolve(path.dirname(htmlFilePath));
+
+    // Get script and style hashes separately
+    const scriptHashesArr = await getHtmlFileHashes(
+      absoluteDir,
+      htmlFilePath,
+      sha,
+      'script'
+    );
+    const styleHashesArr = await getHtmlFileHashes(
+      absoluteDir,
+      htmlFilePath,
+      sha,
+      'style'
     );
 
-    // remove duplicates
-    const uniqueHashes = new Map<string, HashResult>();
-    combinedHashes.forEach((hash) => {
-      const key = `${hash.resourceType}-${hash.hash}`;
-      if (!uniqueHashes.has(key)) {
-        uniqueHashes.set(key, hash);
-      }
-    });
-    const combinedHashesArray = Array.from(uniqueHashes.values());
+    // Build CSP object for this HTML file using the Csp interface
+    const csp: Csp = {
+      directives: {
+        'script-src': {
+          values: [],
+          hashes: scriptHashesArr.map((h) => {
+            const location =
+              h.resourceLocation === 'local'
+                ? 'local'
+                : h.resourceLocation === 'remote'
+                ? 'remote'
+                : 'inline';
+            const hashObj: any = { hash: h.hash, location };
+            if (location !== 'inline') hashObj.src = h.src;
+            return hashObj;
+          }),
+        },
+        'style-src': {
+          values: [],
+          hashes: styleHashesArr.map((h) => {
+            const location =
+              h.resourceLocation === 'local'
+                ? 'local'
+                : h.resourceLocation === 'remote'
+                ? 'remote'
+                : 'inline';
+            const hashObj: any = { hash: h.hash, location };
+            if (location !== 'inline') hashObj.src = h.src;
+            return hashObj;
+          }),
+        },
+        'base-uri': [],
+        'block-all-mixed-content': false,
+        'child-src': [],
+        'connect-src': [],
+        'default-src': [],
+        'font-src': [],
+        'form-action': [],
+        'frame-ancestors': [],
+        'frame-src': [],
+        'img-src': [],
+        'manifest-src': [],
+        'media-src': [],
+        'object-src': [],
+        'report-uri': [],
+        'worker-src': [],
+      },
+    };
 
-    const csp = this.createHtmlCsp(combinedHashesArray);
     return csp;
   }
 
-  public createHtmlCsp(hashes: HashResult[]): string {
-    // script-src
+  public mergePolicies(policies: Csp[]): Csp {
+    const merged: Csp = {
+      directives: {
+        'script-src': { values: [], hashes: [] },
+        'style-src': { values: [], hashes: [] },
+        'block-all-mixed-content': true,
+        'base-uri': [],
+        'child-src': [],
+        'connect-src': [],
+        'default-src': [],
+        'font-src': [],
+        'form-action': [],
+        'frame-ancestors': [],
+        'frame-src': [],
+        'img-src': [],
+        'manifest-src': [],
+        'media-src': [],
+        'object-src': [],
+        'report-uri': [],
+        'worker-src': [],
+      },
+    };
 
-    const scriptSrcSegments = hashes
-      .filter((x) => x.resourceType === 'script')
-      .map((x) => `'${x.hash}'`);
-
-    // if config, get additional values for script-src
-    const scriptSrcConfigValues = this.config?.directives
-      .filter((x) => x.directive === 'script-src')
-      .flatMap((x) => x.values);
-
-    if (scriptSrcConfigValues && scriptSrcConfigValues.length > 0) {
-      scriptSrcSegments.push(...scriptSrcConfigValues);
-    }
-
-    let scriptSrc = `script-src ${scriptSrcSegments.join(' ')}`;
-
-    scriptSrc = scriptSrcSegments.length > 0 ? `${scriptSrc};` : '';
-
-    const styleHashes = hashes
-      .filter((x) => x.resourceType === 'style')
-      .map((x) => `'${x.hash}'`);
-    const distinctStyleHashes = [...new Set(styleHashes)];
-
-    const styleDomains = hashes
-      .filter(
-        (x) =>
-          x.resourceType === 'style' && x.domain !== null && x.domain !== 'self'
-      )
-      .map((x) => `${x.domain}`);
-
-    // add any config style-src values
-    const styleSrcConfigValues = this.config?.directives
-      .filter((x) => x.directive === 'style-src')
-      .flatMap((x) => x.values);
-    if (styleSrcConfigValues && styleSrcConfigValues.length > 0) {
-      styleDomains.push(...styleSrcConfigValues);
-    }
-
-    const distinctStyleDomains = [...new Set(styleDomains)];
-
-    const hasSelf = hashes.some(
-      (x) => x.resourceType === 'style' && x.domain === 'self'
-    );
-    if (hasSelf) {
-      distinctStyleDomains.push("'self'");
-    }
-
-    const styleSrc =
-      distinctStyleDomains.length > 0
-        ? `style-src ${distinctStyleHashes.join(
-            ' '
-          )} ${distinctStyleDomains.join(' ')};`
-        : '';
-
-    if (!this.config) {
-      return `${scriptSrc} ${styleSrc}`;
-    }
-
-    const directives = this.config?.directives
-      .filter(
-        (x) => x.directive !== 'script-src' && x.directive !== 'style-src'
-      )
-      .map((directive) => {
-        return this.buildDirective(directive);
-      });
-
-    const cspDirectives =
-      directives?.filter((directive) => directive !== null) || [];
-
-    // remove duplicate spaces, keep one space
-    const cspValues: string[] = [];
-    if (scriptSrc) {
-      cspValues.push(scriptSrc);
-    }
-    if (styleSrc) {
-      cspValues.push(styleSrc);
-    }
-    cspValues.push(...cspDirectives);
-    const cspValuesSet = new Set(cspValues);
-    return Array.from(cspValuesSet).join(' ');
-  }
-
-  private buildDirective(directiveConfig: DirectiveConfig): string {
-    let directive = `${directiveConfig.directive}`;
-
-    // Check if the directive has a `values` property
-    if ('values' in directiveConfig) {
-      if (Array.isArray(directiveConfig.values)) {
-        // Append array values
-        directive += ` ${directiveConfig.values.join(' ')}`;
-      } else {
-        // Append single string value
-        directive += ` ${directiveConfig.values}`;
+    // Merge script-src and style-src
+    for (const csp of policies) {
+      // script-src
+      if (csp.directives['script-src']) {
+        for (const v of csp.directives['script-src'].values) {
+          if (!merged.directives['script-src'].values.includes(v))
+            merged.directives['script-src'].values.push(v);
+        }
+        for (const h of csp.directives['script-src'].hashes) {
+          if (
+            !merged.directives['script-src'].hashes.some(
+              (x) => x.hash === h.hash
+            )
+          )
+            merged.directives['script-src'].hashes.push(h);
+        }
       }
+      // style-src
+      if (csp.directives['style-src']) {
+        for (const v of csp.directives['style-src'].values) {
+          if (!merged.directives['style-src'].values.includes(v))
+            merged.directives['style-src'].values.push(v);
+        }
+        for (const h of csp.directives['style-src'].hashes) {
+          if (
+            !merged.directives['style-src'].hashes.some(
+              (x) => x.hash === h.hash
+            )
+          )
+            merged.directives['style-src'].hashes.push(h);
+        }
+      }
+      // block-all-mixed-content: true only if all are true
+      if (!csp.directives['block-all-mixed-content']) {
+        merged.directives['block-all-mixed-content'] = false;
+      }
+      // All other string[]
+      [
+        'base-uri',
+        'child-src',
+        'connect-src',
+        'default-src',
+        'font-src',
+        'form-action',
+        'frame-ancestors',
+        'frame-src',
+        'img-src',
+        'manifest-src',
+        'media-src',
+        'object-src',
+        'report-uri',
+        'worker-src',
+      ].forEach((dir) => {
+        const arr = csp.directives[
+          dir as keyof typeof csp.directives
+        ] as string[];
+        for (const v of arr) {
+          if (
+            !(
+              merged.directives[
+                dir as keyof typeof merged.directives
+              ] as string[]
+            ).includes(v)
+          ) {
+            (
+              merged.directives[
+                dir as keyof typeof merged.directives
+              ] as string[]
+            ).push(v);
+          }
+        }
+      });
     }
-
-    return directive.trim() + ';';
+    return merged;
   }
 }

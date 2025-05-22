@@ -3,99 +3,122 @@ import * as path from 'path';
 import { Config } from '../config.js';
 
 export class ConfigUtils {
-  public createEmptyConfig(directory: string, full: 'empty' | 'full'): Config {
-    const emptyConfig =
-      full === 'full' ? this.getFullConfig() : this.getDefaultConfig();
+  public createDefaultConfigFile(directory: string): Config {
+    const emptyConfig = this.defaultConfig();
     fs.writeFileSync(
       path.resolve(directory, '.csprc'),
       JSON.stringify(emptyConfig, null, 2)
     );
+
     console.log('Created empty config file at .csprc');
 
     return emptyConfig;
   }
 
-  private getDefaultConfig(): Config {
-    return {
-      calculateHashes: true,
-      directives: [
-        { directive: 'script-src', values: [] },
-        { directive: 'style-src', values: [] },
-        { directive: 'img-src', values: [] },
-        { directive: 'connect-src', values: [] },
-        { directive: 'font-src', values: [] },
-        { directive: 'media-src', values: [] },
-        { directive: 'frame-src', values: [] },
-        { directive: 'worker-src', values: [] },
-        { directive: 'child-src', values: [] },
-        { directive: 'sandbox', values: [] },
-        { directive: 'upgrade-insecure-requests' },
-        { directive: 'block-all-mixed-content' },
-        { directive: 'require-trusted-types-for', values: 'script' },
-        {
-          directive: 'trusted-types',
-          values: ['allow-duplicates', { policies: ['policy-1', 'policy-2'] }],
-        },
-        { directive: 'report-uri', values: 'https://example.com/csp-report' },
-        { directive: 'report-to', values: ['csp-endpoint'] },
-      ],
-    };
+  public getDefaultConfig(): Config {
+    return this.defaultConfig();
   }
 
-  private getFullConfig(): Config {
+  private defaultConfig(): Config {
     return {
-      calculateHashes: true,
-      directives: [
-        {
-          directive: 'script-src',
-          values: [`'self'`, `'unsafe-inline'`, `'unsafe-eval'`],
+      directives: {
+        'default-src': {
+          self: false,
+          none: false,
         },
-        {
-          directive: 'style-src',
-          values: [`'self'`, `'unsafe-inline'`, 'https://example.com/'],
+        'script-src': {
+          strict_dynamic: false,
+          'unsafe-inline': false,
+          'unsafe-eval': false,
+          self: 'auto',
+          autoHash: true,
+          customValues: [],
         },
-        {
-          directive: 'img-src',
-          values: [`'self'`, 'data:', 'blob:', 'https://example.com/'],
+        'style-src': {
+          'unsafe-inline': false,
+          'unsafe-eval': false,
+          self: 'auto',
+          data: false,
+          blob: false,
+          autoHash: true,
+          customValues: [],
         },
-        {
-          directive: 'connect-src',
-          values: [`'self'`, 'ws:', 'wss:', 'https://example.com/'],
+        'img-src': {
+          self: false,
+          data: false,
+          blob: false,
+          none: false,
+          customValues: [],
         },
-        {
-          directive: 'font-src',
-          values: [`'self'`, 'data:', 'blob:', 'https://example.com/'],
+        'connect-src': {
+          self: false,
+          ws: false,
+          wss: false,
+          none: false,
+          customValues: [],
         },
-        {
-          directive: 'media-src',
-          values: [`'self'`, 'data:', 'blob:', 'https://example.com/'],
+        'font-src': {
+          self: false,
+          data: false,
+          blob: false,
+          none: false,
+          customValues: [],
         },
-        {
-          directive: 'frame-src',
-          values: [`'self'`, 'data:', 'blob:', 'https://example.com/'],
+        'media-src': {
+          self: false,
+          data: false,
+          blob: false,
+          none: false,
+          customValues: [],
         },
-        {
-          directive: 'worker-src',
-          values: [`'self'`, 'data:', 'blob:', 'https://example.com/'],
+        'frame-src': {
+          self: false,
+          data: false,
+          blob: false,
+          none: false,
+          customValues: [],
         },
-        {
-          directive: 'child-src',
-          values: [`'self'`, 'data:', 'blob:', 'https://example.com/'],
+        'worker-src': {
+          self: false,
+          data: false,
+          blob: false,
+          none: false,
+          customValues: [],
         },
-        { directive: 'sandbox', values: ['allow-forms', 'allow-scripts'] },
-        { directive: 'upgrade-insecure-requests' },
-        { directive: 'block-all-mixed-content' },
-        { directive: 'require-trusted-types-for', values: 'script' },
-        {
-          directive: 'trusted-types',
-          values: [
-            'allow-duplicates',
-            { policies: ['policy-1', 'policy-2', 'policy-3'] },
-          ],
+        'child-src': {
+          self: false,
+          'unsafe-inline': false,
+          'unsafe-eval': false,
+          data: false,
+          blob: false,
+          none: false,
+          customValues: [],
         },
-        { directive: 'report-uri', values: 'https://example.com/csp-report' },
-        { directive: 'report-to', values: ['csp-endpoint', 'backup-endpoint'] },
-      ],
+        sandbox: {
+          'allow-forms': false,
+          'allow-modals': false,
+          'allow-popups': false,
+          'allow-same-origin': false,
+          'allow-scripts': false,
+          'allow-downloads': false,
+          'allow-top-navigation': false,
+          'allow-top-navigation-by-user-activation': false,
+          'allow-presentation': false,
+          additionalValues: [],
+        },
+        'upgrade-insecure-requests': false,
+        'block-all-mixed-content': false,
+        'require-trusted-types-for': { values: 'script' },
+        'trusted-types': {
+          none: false,
+          allow_duplicates: false,
+          policies: [],
+          additionalValues: [],
+        },
+        'report-uri': { value: '' },
+        'report-to': { values: [] },
+        additionalDirectives: {},
+      },
     };
   }
 }
