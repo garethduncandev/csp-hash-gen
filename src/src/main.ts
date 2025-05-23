@@ -61,12 +61,6 @@ export async function main(
 
     if (insertIntegrityAttributes) {
       for (const scriptHash of result.directives['script-src'].hashes) {
-        if (
-          scriptHash.hash ===
-          'sha256-vNsfNsiZfYJ11SIlouPfGfGwhSLvGbsxKUEE8c3ZzUw='
-        ) {
-          console.log('gareth', scriptHash);
-        }
         if (scriptHash.src) {
           addIntegrityAttribute(
             htmlFilePath,

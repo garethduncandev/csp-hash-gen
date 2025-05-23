@@ -91,7 +91,7 @@ export class ExternalResourceHasher extends ContentHasher {
     const resourceHash = this.hashContent(fileContent, sha);
 
     return {
-      src: absoluteFilePath,
+      src: resourcePath,
       hash: resourceHash,
       resourceLocation: 'local',
       resourceType: resourceType,
