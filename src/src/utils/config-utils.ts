@@ -117,7 +117,7 @@ export class ConfigUtils {
         },
         'report-uri': { value: '' },
         'report-to': { values: [] },
-        additionalDirectives: {},
+        customDirectives: {},
       },
     };
   }

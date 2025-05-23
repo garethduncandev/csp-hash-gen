@@ -34,10 +34,8 @@ export interface Config {
     };
     'report-to'?: ReportToDirective;
     'default-src'?: DefaultSrcDirective;
-    additionalDirectives?: {
-      [key: string]: {
-        values: string[]; // Accepts multiple values
-      };
+    customDirectives?: {
+      [key: string]: string[];
     };
   };
 }
