@@ -39,7 +39,7 @@ export async function main(
     ['.html', '.htm'].includes(path.extname(filePath))
   );
 
-  var cspGenerator = new CspGenerator();
+  var cspGenerator = new CspGenerator(config);
   const cspParser = new CspParser(config);
 
   const policies: Csp[] = [];
