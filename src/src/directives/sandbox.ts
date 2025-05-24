@@ -10,3 +10,14 @@ export interface SandboxDirective {
   'allow-presentation'?: boolean;
   additionalValues?: string[];
 }
+
+export function sandboxToCsp(directive: SandboxDirective): string {
+  const values: string[] = [];
+  for (const key of Object.keys(directive)) {
+    if (key.startsWith('allow-') && directive[key as keyof SandboxDirective]) {
+      values.push(key);
+    }
+  }
+  if (directive.additionalValues) values.push(...directive.additionalValues);
+  return `sandbox${values.length ? ' ' + values.join(' ') : ''};`;
+}

@@ -3,6 +3,12 @@ import { Csp } from './csp.js';
 import { getFilePaths } from './utils/file-utils.js';
 import { getHtmlFileHashes } from './utils/hash-utils.js';
 import { SHAType } from './sha-type.enum.js';
+import { Config } from './config.js';
+import { BaseUriDirective } from './directives/base-uri.js';
+import { FormActionDirective } from './directives/form-action.js';
+import { FrameAncestorsDirective } from './directives/frame-ancestors.js';
+import { ManifestSrcDirective } from './directives/manifest-src.js';
+import { ObjectSrcDirective } from './directives/object-src.js';
 
 export type CspResponse = {
   combinedCsp: Csp;
@@ -10,11 +16,9 @@ export type CspResponse = {
 };
 
 export class CspGenerator {
-  public constructor() {}
+  public constructor(public readonly config: Config) {}
 
   public async generateCsp(htmlFilePath: string, sha: SHAType): Promise<Csp> {
-    // const hashes: HtmlHashes[] = [];
-
     const absoluteDir = path.resolve(path.dirname(htmlFilePath));
 
     // Get script and style hashes separately
@@ -32,10 +36,11 @@ export class CspGenerator {
     );
 
     // Build CSP object for this HTML file using the Csp interface
+    const cfg = this.config?.directives || {};
     const csp: Csp = {
       directives: {
         'script-src': {
-          values: [],
+          values: cfg['script-src']?.customValues || [],
           hashes: scriptHashesArr.map((h) => {
             const location =
               h.resourceLocation === 'local'
@@ -49,7 +54,7 @@ export class CspGenerator {
           }),
         },
         'style-src': {
-          values: [],
+          values: cfg['style-src']?.customValues || [],
           hashes: styleHashesArr.map((h) => {
             const location =
               h.resourceLocation === 'local'
@@ -63,20 +68,20 @@ export class CspGenerator {
           }),
         },
         'base-uri': [],
-        'block-all-mixed-content': false,
-        'child-src': [],
-        'connect-src': [],
-        'default-src': [],
-        'font-src': [],
+        'block-all-mixed-content': !!cfg['block-all-mixed-content'],
+        'child-src': cfg['child-src']?.customValues || [],
+        'connect-src': cfg['connect-src']?.customValues || [],
+        'default-src': cfg['default-src']?.domains || [],
+        'font-src': cfg['font-src']?.customValues || [],
         'form-action': [],
         'frame-ancestors': [],
-        'frame-src': [],
-        'img-src': [],
+        'frame-src': cfg['frame-src']?.customValues || [],
+        'img-src': cfg['img-src']?.customValues || [],
         'manifest-src': [],
-        'media-src': [],
+        'media-src': cfg['media-src']?.customValues || [],
         'object-src': [],
-        'report-uri': [],
-        'worker-src': [],
+        'report-uri': cfg['report-uri'] ? [cfg['report-uri'].value] : [],
+        'worker-src': cfg['worker-src']?.customValues || [],
       },
     };
 

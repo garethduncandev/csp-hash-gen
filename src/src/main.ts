@@ -8,7 +8,7 @@ import { Csp } from './csp.js';
 import { SHAType } from './sha-type.enum.js';
 import { ConfigUtils } from './utils/config-utils.js';
 import { getFilePaths } from './utils/file-utils.js';
-import { addMetaTag } from './utils/meta-tag-utils.js';
+import { addContentSecurityPolicyMetaTag } from './utils/meta-tag-utils.js';
 
 export async function main(
   createEmptyConfig: false | 'empty' | 'full',
@@ -56,7 +56,11 @@ export async function main(
     if (insertMetaTag) {
       const parsedCsp = cspParser.parseCsp(result);
       console.log('Parsed CSP:', parsedCsp);
-      addMetaTag(parsedCsp, htmlFilePath, parsedHtmlContent);
+      addContentSecurityPolicyMetaTag(
+        parsedCsp,
+        htmlFilePath,
+        parsedHtmlContent
+      );
     }
 
     if (insertIntegrityAttributes) {

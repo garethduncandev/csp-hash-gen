@@ -4,4 +4,5 @@ export interface BaseDirective {
   blob?: boolean;
   none?: boolean;
   customValues?: string[];
+  domains?: string[]; // List of allowed domains for the directive
 }

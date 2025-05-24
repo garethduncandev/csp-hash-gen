@@ -1,7 +1,7 @@
 import * as fs from 'fs';
 import * as cheerio from 'cheerio';
 
-export function addMetaTag(
+export function addContentSecurityPolicyMetaTag(
   csp: string,
   htmlFilePath: string,
   parsedHtmlContent: cheerio.CheerioAPI

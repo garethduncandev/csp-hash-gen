@@ -27,20 +27,18 @@ export class ConfigUtils {
           none: false,
         },
         'script-src': {
-          strict_dynamic: false,
+          'strict-dynamic': false,
           'unsafe-inline': false,
           'unsafe-eval': false,
-          self: 'auto',
-          autoHash: true,
+          self: false,
           customValues: [],
         },
         'style-src': {
           'unsafe-inline': false,
           'unsafe-eval': false,
-          self: 'auto',
+          self: false,
           data: false,
           blob: false,
-          autoHash: true,
           customValues: [],
         },
         'img-src': {
