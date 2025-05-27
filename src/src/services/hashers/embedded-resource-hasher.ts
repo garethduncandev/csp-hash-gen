@@ -1,5 +1,5 @@
 import * as cheerio from 'cheerio';
-import { SHAType } from '../sha-type.enum.js';
+import { SHAType } from '../../sha-type.enum.js';
 import { ContentHasher } from './content-hasher.js';
 import { HashResult } from './hash-result.js';
 

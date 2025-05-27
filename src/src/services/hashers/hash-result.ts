@@ -5,8 +5,3 @@ export interface HashResult {
   resourceType: 'script' | 'style';
   domain: string | null;
 }
-
-export interface HtmlHashes {
-  htmlFilePath: string;
-  hashes: HashResult[];
-}

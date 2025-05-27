@@ -1,6 +1,6 @@
 import path from 'path';
 import { Csp } from './csp.js';
-import { getHtmlFileHashes } from './utils/hash-utils.js';
+import { getHtmlFileHashes } from './services/hashers/hash-utils.js';
 import { SHAType } from './sha-type.enum.js';
 import { Settings } from './settings.js';
 

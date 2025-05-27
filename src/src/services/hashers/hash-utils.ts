@@ -1,9 +1,9 @@
 import * as fs from 'fs';
 import * as cheerio from 'cheerio';
-import { SHAType } from '../sha-type.enum.js';
-import { ExternalResourceHasher } from '../hashers/external-resource-hasher.js';
-import { EmbeddedResourceHasher } from '../hashers/embedded-resource-hasher.js';
-import { HashResult } from '../hashers/hash-result.js';
+import { SHAType } from '../../sha-type.enum.js';
+import { ExternalResourceHasher } from './external-resource-hasher.js';
+import { EmbeddedResourceHasher } from './embedded-resource-hasher.js';
+import { HashResult } from './hash-result.js';
 
 export async function getHtmlFileHashes(
   absoluteDir: string,

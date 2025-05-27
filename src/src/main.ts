@@ -6,10 +6,10 @@ import { CspGenerator } from './csp-generator.js';
 import { parseCsp } from './csp-parser.js';
 import { Csp } from './csp.js';
 import { SHAType } from './sha-type.enum.js';
-import { SettingsUtils } from './utils/settings-utils.js';
-import { getFilePaths } from './utils/file-utils.js';
-import { getHtmlFileHashes } from './utils/hash-utils.js';
-import { addContentSecurityPolicyMetaTag } from './utils/meta-tag-utils.js';
+import { SettingsUtils } from './services/settings-utils.js';
+import { getFilePaths } from './services/file-utils.js';
+import { getHtmlFileHashes } from './services/hashers/hash-utils.js';
+import { addContentSecurityPolicyMetaTag } from './services/meta-tag-utils.js';
 
 export async function main(
   createEmptyConfig: false | 'empty' | 'full',

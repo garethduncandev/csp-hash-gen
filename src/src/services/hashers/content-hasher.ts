@@ -1,5 +1,5 @@
 import * as crypto from 'crypto';
-import { SHAType } from '../sha-type.enum.js';
+import { SHAType } from '../../sha-type.enum.js';
 
 export class ContentHasher {
   public hashContent(content: string, shaType: SHAType): string {
