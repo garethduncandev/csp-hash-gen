@@ -1,6 +1,6 @@
 import * as fs from 'fs';
 import * as cheerio from 'cheerio';
-import { SHAType } from '../../sha-type.enum.js';
+import { SHAType } from '../../types/sha-type.js';
 import { ExternalResourceHasher } from './external-resource-hasher.js';
 import { EmbeddedResourceHasher } from './embedded-resource-hasher.js';
 import { HashResult } from './hash-result.js';

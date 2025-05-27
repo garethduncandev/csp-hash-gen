@@ -1,8 +1,8 @@
 import path from 'path';
-import { Csp } from './csp.js';
-import { getHtmlFileHashes } from './services/hashers/hash-utils.js';
-import { SHAType } from './sha-type.enum.js';
-import { Settings } from './settings.js';
+import { Csp } from '../csp.js';
+import { getHtmlFileHashes } from './hashers/hash-utils.js';
+import { SHAType } from '../types/sha-type.js';
+import { Settings } from '../settings.js';
 
 export class CspGenerator {
   public constructor(public readonly config: Settings) {}

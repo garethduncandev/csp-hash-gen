@@ -1,4 +1,4 @@
-import { SHAType } from './sha-type.enum.js';
+import { SHAType } from './types/sha-type.js';
 
 export interface Settings {
   directory: string;

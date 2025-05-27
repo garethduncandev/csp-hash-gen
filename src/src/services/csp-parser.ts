@@ -1,4 +1,4 @@
-import { Csp } from './csp.js';
+import { Csp } from '../csp.js';
 
 export function parseCsp(csp: Csp): string {
   if (!csp) return '';
