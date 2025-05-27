@@ -10,7 +10,7 @@
     "csp-hash-gen": "dist/index.js"
   },
   "scripts": {
-    "start": "node dist/index.js --directory ./test --sha sha256 --insert-meta-tag --insert-integrity-attributes",
+    "start": "node dist/index.js --directory ./test --sha sha256 --add-meta-tag --add-integrity-attributes",
     "help": "node dist/index.js -h",
     "createEmptyConfig": "node dist/index.js --create-empty-config --directory ./test",
     "precreateEmptyConfig": "npm run build",

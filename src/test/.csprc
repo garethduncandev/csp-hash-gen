@@ -1,106 +1,38 @@
 {
+  "sha": "sha256",
+  "directory": "./",
+  "addMetaTag": true,
+  "addIntegrityAttributes": true,
   "directives": {
-    "default-src": {
-      "self": false,
-      "none": false
-    },
-    "script-src": {
-      "strict_dynamic": false,
-      "unsafe-inline": false,
-      "unsafe-eval": false,
-      "self": "auto",
-      "autoHash": true,
-      "additionalValues": []
-    },
-    "style-src": {
-      "unsafe-inline": false,
-      "unsafe-eval": false,
-      "self": "auto",
-      "data": false,
-      "blob": false,
-      "autoHash": true,
-      "additionalValues": []
-    },
-    "img-src": {
-      "self": false,
-      "data": false,
-      "blob": false,
-      "none": false,
-      "additionalValues": []
-    },
-    "connect-src": {
-      "self": false,
-      "ws": false,
-      "wss": false,
-      "none": false,
-      "additionalValues": []
-    },
-    "font-src": {
-      "self": false,
-      "data": false,
-      "blob": false,
-      "none": false,
-      "additionalValues": []
-    },
-    "media-src": {
-      "self": false,
-      "data": false,
-      "blob": false,
-      "none": false,
-      "additionalValues": []
-    },
-    "frame-src": {
-      "self": false,
-      "data": false,
-      "blob": false,
-      "none": false,
-      "additionalValues": []
-    },
-    "worker-src": {
-      "self": false,
-      "data": false,
-      "blob": false,
-      "none": false,
-      "additionalValues": []
-    },
-    "child-src": {
-      "self": false,
-      "unsafe-inline": false,
-      "unsafe-eval": false,
-      "data": false,
-      "blob": false,
-      "none": false,
-      "additionalValues": []
-    },
-    "sandbox": {
-      "allow-forms": false,
-      "allow-modals": false,
-      "allow-popups": false,
-      "allow-same-origin": false,
-      "allow-scripts": false,
-      "allow-downloads": false,
-      "allow-top-navigation": false,
-      "allow-top-navigation-by-user-activation": false,
-      "allow-presentation": false,
-      "additionalValues": []
-    },
-    "upgrade-insecure-requests": false,
-    "block-all-mixed-content": false,
-    "require-trusted-types-for": {
-      "values": "script"
-    },
-    "trusted-types": {
-      "none": false,
-      "allow_duplicates": false,
-      "policies": [],
-      "additionalValues": []
-    },
-    "report-uri": {
-      "value": ""
-    },
-    "report-to": {
-      "values": []
-    },
-    "additionalDirectives": {}
+    "default-src": [
+      "'self'"
+    ],
+    "script-src": [
+      "'self'"
+    ],
+    "style-src": [
+      "'self'"
+    ],
+    "img-src": [
+      "'self'"
+    ],
+    "connect-src": [
+      "'self'"
+    ],
+    "font-src": [
+      "'self'"
+    ],
+    "media-src": [
+      "'self'"
+    ],
+    "frame-src": [
+      "'self'"
+    ],
+    "worker-src": [
+      "'self'"
+    ],
+    "child-src": [
+      "'self'"
+    ]
   }
 }

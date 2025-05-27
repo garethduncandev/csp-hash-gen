@@ -3,11 +3,12 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { Config } from './config.js';
 import { CspGenerator } from './csp-generator.js';
-import { CspParser } from './csp-parser.js';
+import { parseCsp } from './csp-parser.js';
 import { Csp } from './csp.js';
 import { SHAType } from './sha-type.enum.js';
 import { ConfigUtils } from './utils/config-utils.js';
 import { getFilePaths } from './utils/file-utils.js';
+import { getHtmlFileHashes } from './utils/hash-utils.js';
 import { addContentSecurityPolicyMetaTag } from './utils/meta-tag-utils.js';
 
 export async function main(
@@ -19,6 +20,11 @@ export async function main(
   configPath: string
 ): Promise<void> {
   const configUtils = new ConfigUtils();
+
+  if (createEmptyConfig) {
+    configUtils.createDefaultConfigFile(directory);
+    return;
+  }
 
   // Check if the config file exists
   let config: Config = configUtils.getDefaultConfig();
@@ -40,8 +46,6 @@ export async function main(
   );
 
   var cspGenerator = new CspGenerator(config);
-  const cspParser = new CspParser(config);
-
   const policies: Csp[] = [];
   for (const htmlFilePath of htmlFilePaths) {
     const htmlContent = fs.readFileSync(htmlFilePath, 'utf-8');
@@ -52,9 +56,8 @@ export async function main(
     console.log(JSON.stringify(result, null, 2));
 
     // add csp meta tag (and report-to meta tag if needed)
-
     if (insertMetaTag) {
-      const parsedCsp = cspParser.parseCsp(result);
+      const parsedCsp = parseCsp(result);
       console.log('Parsed CSP:', parsedCsp);
       addContentSecurityPolicyMetaTag(
         parsedCsp,
@@ -64,7 +67,14 @@ export async function main(
     }
 
     if (insertIntegrityAttributes) {
-      for (const scriptHash of result.directives['script-src'].hashes) {
+      // Recompute script and style hashes for integrity attributes
+      const scriptHashesArr = await getHtmlFileHashes(
+        path.dirname(htmlFilePath),
+        htmlFilePath,
+        sha,
+        'script'
+      );
+      for (const scriptHash of scriptHashesArr) {
         if (scriptHash.src) {
           addIntegrityAttribute(
             htmlFilePath,
@@ -75,8 +85,13 @@ export async function main(
           );
         }
       }
-
-      for (const styleHash of result.directives['style-src'].hashes) {
+      const styleHashesArr = await getHtmlFileHashes(
+        path.dirname(htmlFilePath),
+        htmlFilePath,
+        sha,
+        'style'
+      );
+      for (const styleHash of styleHashesArr) {
         if (styleHash.src) {
           addIntegrityAttribute(
             htmlFilePath,
@@ -88,13 +103,10 @@ export async function main(
         }
       }
     }
-
-    // merge stuff here
-    const mergedCsp = cspGenerator.mergePolicies(policies);
-
-    console.log('Merged CSP:', JSON.stringify(mergedCsp, null, 2));
   }
 }
+
+function createEmptyConfig(): void {}
 
 function addIntegrityAttribute(
   htmlFilePath: string,

@@ -10,13 +10,9 @@ program
   .option('--sha <string>', 'SHA type - sha256, sha384 or sha512', 'sha256')
   .option('--directory <string>', 'Directory', './')
   .option('--config <string>', 'CLI config', './.csprc')
+  .option('--add-meta-tag', 'Insert csp meta tag into head of html file', false)
   .option(
-    '--insert-meta-tag',
-    'Insert csp meta tag into head of html file',
-    false
-  )
-  .option(
-    '--insert-integrity-attributes',
+    '--add-integrity-attributes',
     'Update html script with integrity attributes',
     false
   )
@@ -25,8 +21,8 @@ program
       options.createEmptyConfig,
       options.directory,
       options.sha,
-      options.insertMetaTag,
-      options.insertIntegrityAttributes,
+      options.addMetaTag,
+      options.addIntegrityAttributes,
       options.config
     );
   });
