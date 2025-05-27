@@ -1,6 +1,6 @@
 import { SHAType } from './sha-type.enum.js';
 
-export interface Config {
+export interface Settings {
   directory: string;
   sha: SHAType;
   addMetaTag: boolean;

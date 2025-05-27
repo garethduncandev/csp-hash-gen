@@ -1,9 +1,9 @@
 import * as fs from 'fs';
 import * as path from 'path';
-import { Config } from '../config.js';
+import { Settings } from '../settings.js';
 
-export class ConfigUtils {
-  public createDefaultConfigFile(directory: string): Config {
+export class SettingsUtils {
+  public createDefaultConfigFile(directory: string): Settings {
     const emptyConfig = this.defaultConfig();
     fs.writeFileSync(
       path.resolve(directory, '.csprc'),
@@ -15,11 +15,11 @@ export class ConfigUtils {
     return emptyConfig;
   }
 
-  public getDefaultConfig(): Config {
+  public getDefaultConfig(): Settings {
     return this.defaultConfig();
   }
 
-  private defaultConfig(): Config {
+  private defaultConfig(): Settings {
     return {
       sha: 'sha256',
       directory: './',

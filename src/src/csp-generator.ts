@@ -2,10 +2,10 @@ import path from 'path';
 import { Csp } from './csp.js';
 import { getHtmlFileHashes } from './utils/hash-utils.js';
 import { SHAType } from './sha-type.enum.js';
-import { Config } from './config.js';
+import { Settings } from './settings.js';
 
 export class CspGenerator {
-  public constructor(public readonly config: Config) {}
+  public constructor(public readonly config: Settings) {}
 
   public async generateCsp(htmlFilePath: string, sha: SHAType): Promise<Csp> {
     const absoluteDir = path.resolve(path.dirname(htmlFilePath));

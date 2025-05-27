@@ -1,12 +1,12 @@
 import * as cheerio from 'cheerio';
 import * as fs from 'fs';
 import * as path from 'path';
-import { Config } from './config.js';
+import { Settings } from './settings.js';
 import { CspGenerator } from './csp-generator.js';
 import { parseCsp } from './csp-parser.js';
 import { Csp } from './csp.js';
 import { SHAType } from './sha-type.enum.js';
-import { ConfigUtils } from './utils/config-utils.js';
+import { SettingsUtils } from './utils/settings-utils.js';
 import { getFilePaths } from './utils/file-utils.js';
 import { getHtmlFileHashes } from './utils/hash-utils.js';
 import { addContentSecurityPolicyMetaTag } from './utils/meta-tag-utils.js';
@@ -19,7 +19,7 @@ export async function main(
   insertIntegrityAttributes: boolean,
   configPath: string
 ): Promise<void> {
-  const configUtils = new ConfigUtils();
+  const configUtils = new SettingsUtils();
 
   if (createEmptyConfig) {
     configUtils.createDefaultConfigFile(directory);
@@ -27,13 +27,13 @@ export async function main(
   }
 
   // Check if the config file exists
-  let config: Config = configUtils.getDefaultConfig();
+  let config: Settings = configUtils.getDefaultConfig();
   console.log('config path', configPath);
   if (fs.existsSync(configPath)) {
     console.log('.csprc file found');
     const configFile = fs.readFileSync(configPath, 'utf-8');
     try {
-      config = JSON.parse(configFile) as Config;
+      config = JSON.parse(configFile) as Settings;
     } catch (error) {
       console.error('Error parsing config file:', error);
       return;
