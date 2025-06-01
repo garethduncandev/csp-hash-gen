@@ -7,12 +7,12 @@
     "url": "git+https://github.com/garethduncandev/csp-hash-gen.git"
   },
   "bin": {
-    "csp-hash-gen": "dist/index.js"
+    "csp-hash-gen": "dist/cli/cli.js"
   },
   "scripts": {
-    "start": "node dist/index.js --directory ./test --sha sha256 --add-meta-tag --add-integrity-attributes",
-    "help": "node dist/index.js -h",
-    "createEmptyConfig": "node dist/index.js --create-empty-config --directory ./test",
+    "start": "node dist/cli/cli.js --directory ./test-site --sha sha256 --add-meta-tag --add-integrity-attributes",
+    "help": "node dist/cli/cli.js -h",
+    "createEmptyConfig": "node dist/cli/cli.js --create-empty-config --directory ./test-site",
     "precreateEmptyConfig": "npm run build",
     "prestart": "npm run build",
     "build": "tsc",
@@ -37,12 +37,12 @@
     "clean-package": "^2.2.0",
     "typescript": "^5.8.3"
   },
-  "main": "./dist/index.js",
-  "module": "./dist/index.js",
-  "types": "./dist/index.d.ts",
+  "main": "./dist/main.js",
+  "module": "./dist/main.js",
+  "types": "./dist/main.d.ts",
   "exports": {
     ".": {
-      "import": "./dist/index.js"
+      "import": "./dist/main.js"
     }
   },
   "files": [

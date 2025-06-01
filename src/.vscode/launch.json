@@ -11,14 +11,16 @@
       "smartStep": true,
       "args": [
         "-d",
-        "./test",
+        "./test-site",
         "--insert-meta-tag",
         "--insert-integrity-attributes",
         "--config",
-        "./test/.csprc"
+        "./test-site/.csprc"
       ],
       "internalConsoleOptions": "openOnSessionStart",
-      "outFiles": ["${workspaceFolder}/dist/**/*.js"]
+      "outFiles": [
+        "${workspaceFolder}/dist/**/*.js"
+      ]
     }
   ]
 }
