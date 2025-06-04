@@ -12,6 +12,7 @@ export function addContentSecurityPolicyMetaTag(
   parsedHtmlContent('meta[http-equiv="Content-Security-Policy"]').remove();
 
   parsedHtmlContent('head').prepend(metaTag);
+
   // Save the updated HTML content back to the file
   fs.writeFileSync(htmlFilePath, parsedHtmlContent.html(), 'utf-8');
 }
