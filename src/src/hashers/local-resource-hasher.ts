@@ -1,13 +1,9 @@
 import * as path from 'path';
 import * as fs from 'fs';
-import { hashContent } from './hash-content.js';
 import { HashResult } from './hash-result.js';
 import { SHAType } from './sha-type.js';
 import type { CheerioAPI } from 'cheerio';
-
-function isRemoteUrl(url: string): boolean {
-  return /^https?:\/\//i.test(url) || url.startsWith('//');
-}
+import { hashContent, isRemoteUrl } from './hash-utils.js';
 
 export function hashLocalResources(
   resourceType: 'script' | 'style',

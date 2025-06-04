@@ -1,7 +1,7 @@
 import * as cheerio from 'cheerio';
 import { SHAType } from './sha-type.js';
-import { hashContent } from './hash-content.js';
 import { HashResult } from './hash-result.js';
+import { hashContent } from './hash-utils.js';
 
 type embeddedResource = { content: string; resourceType: 'style' | 'script' };
 

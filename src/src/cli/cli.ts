@@ -25,6 +25,7 @@ program
     // load config from path or fallback to default config
     let config = getConfig(cliParameters.config);
     if (!config) {
+      console.log('loading default config');
       config = getDefaultConfig();
     }
 

@@ -7,7 +7,10 @@ export function getConfig(configPath: string): Config | null {
   let config: Config = getDefaultConfig();
   console.log('config path', configPath);
   if (!fs.existsSync(configPath)) {
-    return null;
+    console.log('.csprc file not found at', configPath);
+    throw new Error(
+      'Config file not found. Please create a .csprc file in the current directory or specify a valid path.'
+    );
   }
 
   console.log('.csprc file found');

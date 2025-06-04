@@ -1,11 +1,7 @@
-import { hashContent } from './hash-content.js';
 import { HashResult } from './hash-result.js';
+import { hashContent, isRemoteUrl } from './hash-utils.js';
 import { SHAType } from './sha-type.js';
 import type { CheerioAPI } from 'cheerio';
-
-function isRemoteUrl(url: string): boolean {
-  return /^https?:\/\//i.test(url) || url.startsWith('//');
-}
 
 export async function hashRemoteResources(
   resourceType: 'script' | 'style',

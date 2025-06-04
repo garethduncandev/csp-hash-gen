@@ -31,15 +31,42 @@ export async function generateCsp(
 
   // Add hashes to the CSP
   if (scriptHashesArr.length > 0) {
+    // Only inline/embedded hashes are added to the csp
+    const hashes = scriptHashesArr.filter(
+      (x) =>
+        x.resourceLocation === 'embedded' || x.resourceLocation === 'inline'
+    );
+
+    const domains = scriptHashesArr.filter(
+      (x) => x.resourceLocation === 'remote'
+    );
+    const self = scriptHashesArr.some((x) => x.resourceLocation === 'local');
+
     csp['script-src'] = [
       ...(csp['script-src'] || []),
-      ...scriptHashesArr.map((h) => `'${h.hash}'`),
+      ...(self ? [`'self'`] : []),
+      ...domains.map((h) => (h.domain ? h.domain : '')),
+      ...hashes.map((h) => `'${h.hash}'`),
     ];
   }
+
   if (styleHashesArr.length > 0) {
+    const hashes = styleHashesArr.filter(
+      (x) =>
+        x.resourceLocation === 'embedded' || x.resourceLocation === 'inline'
+    );
+
+    const domains = styleHashesArr.filter(
+      (x) => x.resourceLocation === 'remote'
+    );
+
+    const self = styleHashesArr.some((x) => x.resourceLocation === 'local');
+
     csp['style-src'] = [
       ...(csp['style-src'] || []),
-      ...styleHashesArr.map((h) => `'${h.hash}'`),
+      ...(self ? [`'self'`] : []),
+      ...domains.map((h) => (h.domain ? h.domain : '')),
+      ...hashes.map((h) => `'${h.hash}'`),
     ];
   }
 

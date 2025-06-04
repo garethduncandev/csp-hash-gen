@@ -7,12 +7,6 @@
     "default-src": [
       "'self'"
     ],
-    "script-src": [
-      "'self'"
-    ],
-    "style-src": [
-      "'self'"
-    ],
     "img-src": [
       "'self'"
     ],
@@ -20,18 +14,6 @@
       "'self'"
     ],
     "font-src": [
-      "'self'"
-    ],
-    "media-src": [
-      "'self'"
-    ],
-    "frame-src": [
-      "'self'"
-    ],
-    "worker-src": [
-      "'self'"
-    ],
-    "child-src": [
       "'self'"
     ]
   }
